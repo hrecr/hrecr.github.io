@@ -17,8 +17,13 @@
 
     <nav class="nav" aria-label="Primary">
       <a class="navlink" href="#about">About</a>
-      <a class="navlink" href="#publications">Papers</a>
+      <a class="navlink" href="#education">Education</a>
       <a class="navlink" href="#research">Research</a>
+      <a class="navlink" href="#experience">Experience</a>
+      <a class="navlink" href="#teaching">Teaching</a>
+      <a class="navlink" href="#service">Service</a>
+      <a class="navlink" href="#awards">Awards</a>
+      <a class="navlink" href="#workshops">Workshops</a>
       <a class="navlink" href="#projects">Projects</a>
       <a class="navlink" href="#contact">Contact</a>
       <button class="theme" id="themeToggle" type="button" aria-label="Toggle theme">Theme</button>
@@ -53,7 +58,7 @@
     <section class="section" id="about">
       <div class="section-head">
         <h2>About</h2>
-        <p>Short bio, focus areas, and a compact skills map.</p>
+        <p>Short bio + a compact skills map.</p>
       </div>
 
       <div class="grid-2">
@@ -67,40 +72,76 @@
           <div id="skills" class="skills"></div>
         </article>
       </div>
-
-      <div class="grid-2">
-        <article class="panel">
-          <h3>Experience</h3>
-          <div id="experience" class="timeline"></div>
-        </article>
-
-        <article class="panel">
-          <h3>Education</h3>
-          <div id="education" class="timeline"></div>
-        </article>
-      </div>
     </section>
 
-    <section class="section" id="publications">
+    <section class="section" id="education">
       <div class="section-head">
-        <h2>Papers</h2>
-        <p>Peer-reviewed, preprints, workshop papers — whatever you publish, make it easy to scan.</p>
+        <h2>Education</h2>
+        <p>Formal training and research focus areas.</p>
       </div>
-      <div class="cards" id="pubCards"></div>
+      <article class="panel">
+        <div id="educationTimeline" class="timeline"></div>
+      </article>
     </section>
 
     <section class="section" id="research">
       <div class="section-head">
-        <h2>Research Projects</h2>
-        <p>Deep work, messy experiments, and the occasional plot twist.</p>
+        <h2>Research</h2>
+        <p>Secure computation, privacy-preserving ML, and post-quantum crypto — with an eye on proofs and performance.</p>
       </div>
       <div class="cards" id="researchCards"></div>
     </section>
 
+    <section class="section" id="experience">
+      <div class="section-head">
+        <h2>Experience</h2>
+        <p>Industry and applied research work.</p>
+      </div>
+      <article class="panel">
+        <div id="experienceTimeline" class="timeline"></div>
+      </article>
+    </section>
+
+    <section class="section" id="teaching">
+      <div class="section-head">
+        <h2>Teaching</h2>
+        <p>Courses and TA / instruction experience.</p>
+      </div>
+      <div class="cards" id="teachingCards"></div>
+    </section>
+
+    <section class="section" id="service">
+      <div class="section-head">
+        <h2>Academic Service</h2>
+        <p>Reviewing, mentoring, and community contributions.</p>
+      </div>
+      <article class="panel">
+        <ul class="bullets" id="serviceList"></ul>
+      </article>
+    </section>
+
+    <section class="section" id="awards">
+      <div class="section-head">
+        <h2>Honors & Awards</h2>
+        <p>Recognition and distinctions.</p>
+      </div>
+      <article class="panel">
+        <ul class="bullets" id="awardsList"></ul>
+      </article>
+    </section>
+
+    <section class="section" id="workshops">
+      <div class="section-head">
+        <h2>Conferences & Workshops</h2>
+        <p>Selected academic events.</p>
+      </div>
+      <div class="cards" id="workshopsCards"></div>
+    </section>
+
     <section class="section" id="projects">
       <div class="section-head">
-        <h2>Implementation Projects</h2>
-        <p>Production-ish code: libraries, demos, prototypes, and the stuff that actually runs.</p>
+        <h2>Projects</h2>
+        <p>Implementation projects: libraries, prototypes, and applied systems work.</p>
       </div>
 
       <div class="subhead">

@@ -120,10 +120,10 @@ function renderTimeline(list, targetId, kind) {
     when.className = 'when';
 
     if (kind === 'experience') {
-      title.textContent = `${item.role || 'Role'} @ ${item.org || 'Org'}`;
+      title.textContent = `${item.role || ''}${item.org ? ` @ ${item.org}` : ''}`.trim();
       when.textContent = prettyYearRange(item.start, item.end);
     } else {
-      title.textContent = `${item.degree || 'Degree'} — ${item.school || 'School'}`;
+      title.textContent = `${item.degree || ''}${item.school ? ` — ${item.school}` : ''}`.trim();
       when.textContent = prettyYearRange(item.start, item.end);
     }
 
@@ -211,29 +211,33 @@ function card(title, sub, desc, tags, actions) {
   return c;
 }
 
-function renderPublications(pubs) {
-  const root = el('pubCards');
-  root.innerHTML = '';
+function cardWithList(title, sub, items) {
+  const c = document.createElement('article');
+  c.className = 'card reveal';
 
-  if (!Array.isArray(pubs) || !pubs.length) {
-    root.appendChild(card('No papers yet', '', 'Add publications in data/site.json', [], []));
-    return;
+  const t = document.createElement('div');
+  t.className = 'title';
+  t.textContent = title;
+  c.appendChild(t);
+
+  if (sub) {
+    const s = document.createElement('div');
+    s.className = 'sub';
+    s.textContent = sub;
+    c.appendChild(s);
   }
 
-  for (const p of pubs) {
-    const title = p.title || 'Untitled paper';
-    const sub = joinNonEmpty([p.venue, p.year, p.authors]);
-    const desc = p.note || '';
-    const tags = p.badges || [];
-    const L = p.links || {};
-
-    const actions = [];
-    if (L.pdf) actions.push({ label: 'PDF', href: L.pdf });
-    if (L.doi) actions.push({ label: 'DOI', href: normalizeUrl(L.doi) });
-    if (L.code) actions.push({ label: 'Code', href: normalizeUrl(L.code) });
-
-    root.appendChild(card(title, sub, desc, tags, actions));
+  if (Array.isArray(items) && items.length) {
+    const ul = document.createElement('ul');
+    for (const it of items) {
+      const li = document.createElement('li');
+      li.textContent = it;
+      ul.appendChild(li);
+    }
+    c.appendChild(ul);
   }
+
+  return c;
 }
 
 function renderResearch(items) {
@@ -319,6 +323,111 @@ async function renderGithubProjects(username, featuredNames) {
   }
 }
 
+function renderHonors(items) {
+  const root = el('awardsList');
+  root.innerHTML = '';
+  const list = Array.isArray(items) ? items : [];
+
+  if (!list.length) {
+    const li = document.createElement('li');
+    li.textContent = '—';
+    root.appendChild(li);
+    return;
+  }
+
+  for (const a of list) {
+    const li = document.createElement('li');
+    li.textContent = String(a);
+    root.appendChild(li);
+  }
+}
+
+function renderService(items) {
+  const root = el('serviceList');
+  root.innerHTML = '';
+  const list = Array.isArray(items) ? items : [];
+
+  if (!list.length) {
+    const li = document.createElement('li');
+    li.textContent = '—';
+    root.appendChild(li);
+    return;
+  }
+
+  for (const item of list) {
+    const li = document.createElement('li');
+
+    // Strings
+    if (!item || typeof item === 'string') {
+      li.textContent = String(item || '');
+      root.appendChild(li);
+      continue;
+    }
+
+    // Objects: { text, links: [{label,url}, ...] }
+    const text = item.text || '';
+    li.appendChild(document.createTextNode(text));
+
+    if (Array.isArray(item.links) && item.links.length) {
+      li.appendChild(document.createTextNode(' ('));
+      item.links.forEach((L, idx) => {
+        if (idx) li.appendChild(document.createTextNode(' · '));
+        const a = document.createElement('a');
+        a.href = normalizeUrl(L.url || '');
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.textContent = L.label || L.url || 'link';
+        li.appendChild(a);
+      });
+      li.appendChild(document.createTextNode(')'));
+    }
+
+    root.appendChild(li);
+  }
+}
+
+function renderTeaching(groups) {
+  const root = el('teachingCards');
+  root.innerHTML = '';
+  const list = Array.isArray(groups) ? groups : [];
+
+  if (!list.length) {
+    root.appendChild(card('No teaching listed', '', 'Add teachingExperience in data/site.json', [], []));
+    return;
+  }
+
+  for (const g of list) {
+    const org = g.org || 'Organization';
+    const items = (g.items || []).map(x => {
+      if (!x) return '';
+      if (typeof x === 'string') return x;
+      const course = x.course || '';
+      const term = x.term || '';
+      return [course, term].filter(Boolean).join(' — ');
+    }).filter(Boolean);
+
+    root.appendChild(cardWithList(org, '', items));
+  }
+}
+
+function renderWorkshops(items) {
+  const root = el('workshopsCards');
+  root.innerHTML = '';
+  const list = Array.isArray(items) ? items : [];
+
+  if (!list.length) {
+    root.appendChild(card('No workshops listed', '', 'Add conferencesWorkshops in data/site.json', [], []));
+    return;
+  }
+
+  for (const w of list) {
+    const title = w?.name || 'Event';
+    const sub = joinNonEmpty([w?.host, w?.location]);
+    const desc = w?.date || '';
+    root.appendChild(card(title, sub, desc, [], []));
+  }
+}
+
 function attachReveal() {
   const obs = new IntersectionObserver((entries) => {
     for (const e of entries) {
@@ -371,10 +480,14 @@ async function init() {
   el('li').textContent = site?.links?.linkedin ? 'LinkedIn profile' : '—';
 
   renderSkills(site?.skills || {});
-  renderTimeline(site?.experience || [], 'experience', 'experience');
-  renderTimeline(site?.education || [], 'education', 'education');
+  renderTimeline(site?.education || [], 'educationTimeline', 'education');
+  renderTimeline(site?.experience || [], 'experienceTimeline', 'experience');
 
-  renderPublications(site?.publications || []);
+  renderTeaching(site?.teachingExperience || []);
+  renderService(site?.academicServices || []);
+  renderHonors(site?.honorsAwards || []);
+  renderWorkshops(site?.conferencesWorkshops || []);
+
   renderResearch(site?.researchProjects || []);
 
   const impl = site?.implementationProjects || { mode: 'github' };
