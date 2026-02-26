@@ -77,7 +77,7 @@
       "location": "Tehran, Iran",
       "start": "2017/09",
       "end": "2020/08",
-      "details": []
+      "details": ["Research focus:Quantum error correcting codes, Surface codes, information theoretic cryptography."]
     },
     {
       "degree": "Minor in Physics",
@@ -85,7 +85,7 @@
       "location": "Tehran, Iran",
       "start": "2018/09",
       "end": "2020/08",
-      "details": []
+      "details": ["Courses:Quantum Mechanics 1,2, Statical mechanics 1,2, Electromagnetism 1,2, Advanced Electrodynamics, Advanced Quantum mechanics 1,..."]
     },
     {
       "degree": "B.Sc. in Applied Mathematics",
@@ -297,18 +297,10 @@
   ]
 },
   "honorsAwards": [
-      {
-        "text": "Recognized as an Outstanding Teaching Assistant for the Computer Networks and Security course; awarded a top-up conference travel allowance (8,000 TL), Spring 2025."
-      },
-      {
-        "text": "Awarded double major recognition from the Exceptional Talent Center at the university."
-      },
-      {
-        "text": "Admitted to the Master of Science program without a national entrance exam (Exceptional Talent Center)."
-      },
-      {
-        "text": "Ranked in the top 5% among all students in the B.Sc. program."
-      }
+        "Recognized as an Outstanding Teaching Assistant for the Computer Networks and Security course; awarded a top-up conference travel allowance (8,000 TL), Spring 2025.",
+        "Awarded double major recognition from the Exceptional Talent Center at the university.",
+        "Admitted to the Master of Science program without a national entrance exam (Exceptional Talent Center).",
+        "Ranked in the top 5% among all students in the B.Sc. program."
   ],
   "academicServices": [
   {
