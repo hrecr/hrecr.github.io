@@ -8,7 +8,7 @@ import {
   normalizeUrl
 } from '../assets/common.js';
 
-const views = ['about', 'resume', 'publications', 'research', 'projects', 'contact', 'help'];
+const views = ['about', 'education', 'research', 'experience', 'teaching', 'service', 'awards', 'workshops', 'projects', 'contact', 'help'];
 let site = null;
 let activeView = 'about';
 let linkIndex = []; // links shown in terminal, for `open N`
@@ -113,78 +113,142 @@ function renderAbout() {
   return { text: content, links };
 }
 
-function renderResume() {
-  const skills = site?.skills || {};
+function renderEducation() {
   const edu = site?.education || [];
-  const exp = site?.experience || [];
-
   const lines = [];
-  lines.push('SUMMARY');
-  lines.push(site?.summary || '');
-  lines.push('');
 
-  lines.push('SKILLS');
-  for (const [cat, items] of Object.entries(skills)) {
-    lines.push(`${cat}: ${(items || []).join(', ')}`);
-  }
-  lines.push('');
-
-  lines.push('EDUCATION');
-  for (const e of edu) {
-    lines.push(`${e.degree || ''} — ${e.school || ''} (${e.start || ''}-${e.end || ''})`);
-    if (e.location) lines.push(`  ${e.location}`);
-    for (const d of (e.details || [])) lines.push(`  - ${d}`);
-  }
-  lines.push('');
-
-  lines.push('EXPERIENCE');
-  for (const x of exp) {
-    lines.push(`${x.role || ''} @ ${x.org || ''} (${x.start || ''}-${x.end || ''})`);
-    if (x.location) lines.push(`  ${x.location}`);
-    for (const b of (x.bullets || [])) lines.push(`  - ${b}`);
+  if (!edu.length) {
+    lines.push('No education items (add education in data/site.json).');
+  } else {
+    for (const e of edu) {
+      const when = [e.start, e.end].filter(Boolean).join('–');
+      lines.push(`${e.degree || ''} — ${e.school || ''} (${when})`.trim());
+      if (e.location) lines.push(`  ${e.location}`);
+      for (const d of (e.details || [])) lines.push(`  - ${d}`);
+      lines.push('');
+    }
   }
 
-  const content = box('RESUME', wrapLines(lines, 68));
+  const content = box('EDUCATION', wrapLines(lines, 68));
   const links = [];
   if (site?.links?.cvPdf) links.push({ label: 'CV (PDF)', url: site.links.cvPdf });
   return { text: content, links };
 }
 
-function renderPublications() {
-  const pubs = site?.publications || [];
+function renderExperience() {
+  const exp = site?.experience || [];
   const lines = [];
 
-  if (!pubs.length) {
-    lines.push('No publications yet (or you forgot to add them in data/site.json).');
+  if (!exp.length) {
+    lines.push('No experience items (add experience in data/site.json).');
   } else {
-    let idx = 1;
-    for (const p of pubs) {
-      lines.push(`${idx}. ${p.title || 'Untitled'}`);
-      if (p.authors) lines.push(`   ${p.authors}`);
-      const venue = [p.venue, p.year].filter(Boolean).join(' · ');
-      if (venue) lines.push(`   ${venue}`);
-      if (p.note) lines.push(`   Note: ${p.note}`);
+    for (const x of exp) {
+      const when = [x.start, x.end].filter(Boolean).join('–');
+      lines.push(`${x.role || ''}${x.org ? ` @ ${x.org}` : ''} (${when})`.trim());
+      if (x.location) lines.push(`  ${x.location}`);
+      for (const b of (x.bullets || [])) lines.push(`  - ${b}`);
       lines.push('');
-      idx += 1;
     }
   }
 
-  const links = [];
-  for (const p of pubs) {
-    if (p?.links?.pdf) links.push({ label: `PDF: ${p.title || 'paper'}`, url: p.links.pdf });
-    if (p?.links?.doi) links.push({ label: `DOI: ${p.title || 'paper'}`, url: normalizeUrl(p.links.doi) });
-    if (p?.links?.code) links.push({ label: `Code: ${p.title || 'paper'}`, url: normalizeUrl(p.links.code) });
+  const content = box('EXPERIENCE', wrapLines(lines, 68));
+  return { text: content, links: [] };
+}
+
+function renderTeaching() {
+  const groups = site?.teachingExperience || [];
+  const lines = [];
+
+  if (!groups.length) {
+    lines.push('No teaching experience listed (add teachingExperience in data/site.json).');
+  } else {
+    for (const g of groups) {
+      lines.push(g.org || 'Organization');
+      for (const it of (g.items || [])) {
+        if (typeof it === 'string') lines.push(`  - ${it}`);
+        else {
+          const course = it?.course || '';
+          const term = it?.term || '';
+          lines.push(`  - ${[course, term].filter(Boolean).join(' — ')}`);
+        }
+      }
+      lines.push('');
+    }
   }
 
-  const content = box('PAPERS & PUBLICATIONS', wrapLines(lines, 68));
+  const content = box('TEACHING', wrapLines(lines, 68));
+  return { text: content, links: [] };
+}
+
+function renderService() {
+  const items = site?.academicServices || [];
+  const lines = [];
+  const links = [];
+
+  if (!items.length) {
+    lines.push('No academic service items (add academicServices in data/site.json).');
+  } else {
+    for (const it of items) {
+      if (typeof it === 'string') {
+        lines.push(`- ${it}`);
+      } else if (it && typeof it === 'object') {
+        if (it.text) lines.push(`- ${it.text}`);
+        for (const L of (it.links || [])) {
+          if (L?.url) links.push({ label: L.label || L.url, url: L.url });
+        }
+      }
+    }
+  }
+
+  const content = box('ACADEMIC SERVICE', wrapLines(lines, 68));
   return { text: content, links };
+}
+
+function renderAwards() {
+  const items = site?.honorsAwards || [];
+  const lines = [];
+
+  if (!items.length) {
+    lines.push('No honors/awards listed (add honorsAwards in data/site.json).');
+  } else {
+    lines.push('Honors & Awards');
+    lines.push('');
+    for (const a of items) lines.push(`- ${a}`);
+  }
+
+  const content = box('HONORS & AWARDS', wrapLines(lines, 68));
+  return { text: content, links: [] };
+}
+
+function renderWorkshops() {
+  const items = site?.conferencesWorkshops || [];
+  const lines = [];
+
+  if (!items.length) {
+    lines.push('No conferences/workshops listed (add conferencesWorkshops in data/site.json).');
+  } else {
+    for (const w of items) {
+      const name = w?.name || 'Event';
+      const host = w?.host || '';
+      const loc = w?.location || '';
+      const date = w?.date || '';
+      const meta = [host, loc].filter(Boolean).join(' · ');
+      if (date) lines.push(`${date} — ${name}`);
+      else lines.push(name);
+      if (meta) lines.push(`  ${meta}`);
+      lines.push('');
+    }
+  }
+
+  const content = box('CONFERENCES & WORKSHOPS', wrapLines(lines, 68));
+  return { text: content, links: [] };
 }
 
 function renderResearch() {
   const items = site?.researchProjects || [];
   const lines = [];
   if (!items.length) {
-    lines.push('No research projects yet (add them in data/site.json).');
+    lines.push('No research projects yet (add researchProjects in data/site.json).');
   } else {
     let idx = 1;
     for (const r of items) {
@@ -206,7 +270,7 @@ function renderResearch() {
     if (L.code) links.push({ label: `Code: ${r.title || 'project'}`, url: normalizeUrl(L.code) });
   }
 
-  const content = box('RESEARCH PROJECTS', wrapLines(lines, 68));
+  const content = box('RESEARCH', wrapLines(lines, 68));
   return { text: content, links };
 }
 
@@ -236,7 +300,7 @@ async function renderProjects() {
       }
     }
 
-    const content = box('IMPLEMENTATION PROJECTS', wrapLines(lines, 68));
+    const content = box('PROJECTS', wrapLines(lines, 68));
     return { text: content, links, meta: 'MANUAL MODE' };
   }
 
@@ -297,16 +361,16 @@ function renderHelp() {
   const lines = [
     'COMMANDS',
     '',
-    '  about | resume | papers | research | projects | contact',
+    '  about | education | research | experience | teaching',
+    '  service | awards | workshops | projects | contact',
     '  open N        Open link number N from the current screen',
-    '  github        Open GitHub profile (if configured)',
     '  cv            Open your CV PDF',
     '  clear         Clear terminal output',
     '  ui            Back to UI selector',
     '',
     'KEYS',
     '',
-    '  1–6           Switch sections',
+    '  1–9, 0        Switch sections',
     '  F1 or ?       Help',
     '  ESC           UI selector',
     '  CTRL+L        Clear',
@@ -361,9 +425,13 @@ async function setView(view) {
 
   let out;
   if (view === 'about') out = renderAbout();
-  else if (view === 'resume') out = renderResume();
-  else if (view === 'publications') out = renderPublications();
+  else if (view === 'education') out = renderEducation();
   else if (view === 'research') out = renderResearch();
+  else if (view === 'experience') out = renderExperience();
+  else if (view === 'teaching') out = renderTeaching();
+  else if (view === 'service') out = renderService();
+  else if (view === 'awards') out = renderAwards();
+  else if (view === 'workshops') out = renderWorkshops();
   else if (view === 'projects') out = await renderProjects();
   else if (view === 'contact') out = renderContact();
   else out = renderHelp();
@@ -406,40 +474,38 @@ async function runCmd(raw) {
   const { cmd, args } = parseCmd(raw);
   if (!cmd) return;
 
+  // Numeric shortcuts (matching the left menu)
   if (cmd === '1') return setView('about');
-  if (cmd === '2') return setView('resume');
-  if (cmd === '3') return setView('publications');
-  if (cmd === '4') return setView('research');
-  if (cmd === '5') return setView('projects');
-  if (cmd === '6') return setView('contact');
+  if (cmd === '2') return setView('education');
+  if (cmd === '3') return setView('research');
+  if (cmd === '4') return setView('experience');
+  if (cmd === '5') return setView('teaching');
+  if (cmd === '6') return setView('service');
+  if (cmd === '7') return setView('awards');
+  if (cmd === '8') return setView('workshops');
+  if (cmd === '9') return setView('projects');
+  if (cmd === '0') return setView('contact');
 
   if (['about', 'a'].includes(cmd)) return setView('about');
+  if (['education', 'edu', 'e'].includes(cmd)) return setView('education');
+  if (['research', 'r'].includes(cmd)) return setView('research');
+  if (['experience', 'exp', 'x'].includes(cmd)) return setView('experience');
+  if (['teaching', 'teach', 't'].includes(cmd)) return setView('teaching');
+  if (['service', 'svc', 's'].includes(cmd)) return setView('service');
+  if (['awards', 'honors', 'h'].includes(cmd)) return setView('awards');
+  if (['workshops', 'ws', 'w'].includes(cmd)) return setView('workshops');
+  if (['projects', 'p'].includes(cmd)) return setView('projects');
+  if (['contact', 'c'].includes(cmd)) return setView('contact');
 
-  if (['resume', 'r'].includes(cmd)) return setView('resume');
   if (cmd === 'cv') {
     if (site?.links?.cvPdf) {
       window.open(site.links.cvPdf, '_blank', 'noopener');
       flashMeta('Opened CV.');
       return;
     }
-    return setView('resume');
+    flashMeta('No CV link configured.');
+    return;
   }
-
-  if (['papers', 'pubs', 'publications', 'p'].includes(cmd)) return setView('publications');
-  if (['research', 'lab'].includes(cmd)) return setView('research');
-
-  if (cmd === 'github') {
-    if (site?.links?.github) {
-      window.open(normalizeUrl(site.links.github), '_blank', 'noopener');
-      flashMeta('Opened GitHub.');
-      return;
-    }
-    return setView('projects');
-  }
-  if (['projects', 'g'].includes(cmd)) return setView('projects');
-
-  if (['contact', 'c'].includes(cmd)) return setView('contact');
-  if (['help', '?', 'h', 'f1'].includes(cmd)) return setView('help');
 
   if (cmd === 'open') return openLink(args[0]);
 
@@ -454,6 +520,8 @@ async function runCmd(raw) {
     flashMeta('CLEARED');
     return;
   }
+
+  if (['help', '?', 'f1'].includes(cmd)) return setView('help');
 
   flashMeta('Unknown command. Type HELP.');
 }
@@ -488,7 +556,7 @@ function attachEvents() {
       setView('help');
       return;
     }
-    if (['1','2','3','4','5','6'].includes(e.key) && !isTyping()) {
+    if (['1','2','3','4','5','6','7','8','9','0'].includes(e.key) && !isTyping()) {
       runCmd(e.key);
     }
     if (e.key === '?' && !isTyping()) {
