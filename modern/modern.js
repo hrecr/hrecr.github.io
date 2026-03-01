@@ -36,6 +36,11 @@ function toggleTheme() {
   setTheme(next);
 }
 
+
+function maybeEl(id) {
+  return document.getElementById(id);
+}
+
 function el(id) {
   const node = document.getElementById(id);
   if (!node) throw new Error(`Missing #${id}`);
@@ -240,9 +245,10 @@ function cardWithList(title, sub, items) {
   return c;
 }
 
+
 function renderResearch(items) {
-  const root = el('researchCards');
-  if (!root) return;
+  const root = maybeEl('researchCards');
+  if (!root) return; 
   root.innerHTML = '';
 
   if (!Array.isArray(items) || !items.length) {
@@ -259,7 +265,7 @@ function renderResearch(items) {
 
     const actions = [];
     if (L.projectPage) actions.push({ label: 'Project', href: normalizeUrl(L.projectPage) });
-    if (L.paper) actions.push({ label: 'Paper', href: L.paper });
+    if (L.paper) actions.push({ label: 'Paper', href: normalizeUrl(L.paper) });
     if (L.code) actions.push({ label: 'Code', href: normalizeUrl(L.code) });
 
     root.appendChild(card(title, sub, desc, tags, actions));
@@ -487,7 +493,7 @@ async function init() {
   renderHonors(site?.honorsAwards || []);
   renderWorkshops(site?.conferencesWorkshops || []);
 
-  renderResearch(site?.researchProjects || []);
+ 
 
   const impl = site?.implementationProjects || { mode: 'github' };
   setHref('ghProfile', normalizeUrl(site?.links?.github || ''));
