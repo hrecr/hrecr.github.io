@@ -1,5 +1,3 @@
-// Research page script (no build tools, just vanilla JS)
-
 function el(id) { return document.getElementById(id); }
 
 function normalizeUrl(u) {
@@ -131,7 +129,6 @@ function renderPublications(pubs) {
     const year = p.year || '';
     const note = joinNonEmpty([venue, year]);
 
-    // Title (optionally linked)
     if (p.url) {
       const a = document.createElement('a');
       a.href = normalizeUrl(p.url);
@@ -209,7 +206,6 @@ async function init() {
   const pubs = site?.publications || [];
   renderPublications(pubs);
 
-  // populate tags
   const tagSel = el('tag');
   for (const t of uniqueTags(all)) {
     const opt = document.createElement('option');
@@ -218,7 +214,6 @@ async function init() {
     tagSel.appendChild(opt);
   }
 
-  // initial render + filtering
   const q = el('q');
   const rerender = () => {
     const filtered = filterItems(all, q.value, tagSel.value);
