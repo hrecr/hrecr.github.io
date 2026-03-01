@@ -1,6 +1,6 @@
 {
   "name": "Hamid Reza Saadi Dadmarzi",
-  "tagline": "M.Sc. Researcher • Secure Computation • Privacy-Preserving ML",
+  "tagline": "M.Sc. Researcher • Secure Computation • Rust developer",
   "location": "Istanbul, Türkiye",
   "email": "hdadmarzi23@ku.edu.tr",
   "phone": "+90 538 783 75 69",
@@ -15,9 +15,9 @@
   },
   "summary": "I am currently an M.Sc. student in Computer Science at Koç University (Istanbul), where I work under the supervision of Prof. Alptekin Küpçü. My research centers on password-based authentication protocols, SMPC-based designs, and performance-driven cryptographic engineering. My work combines rigorous security arguments with real-world benchmarking, including Rust/Go implementations and Dockerized experimental frameworks. I graduated from the Polytechnic University of Tehran with an M.Sc. in Applied Mathematics, where my research focused on quantum error correction and surface codes. I also worked on quantum kernels for neural networks using Qiskit and PyQuil.",
   "highlights": [
-    "Research across SMPC, privacy-preserving ML, and post-quantum cryptography (first-author projects in progress).",
+    "Research across SMPC, post-quantum cryptography and privacy-preserving ML.",
     "External reviewer for IEEE TIFS, ACM ASIACCS 2024 and 2026, ACNS 2026, JISAS 2025,Royal society open science 2024 and the Turkish Journal of Electrical Engineering & Computer Sciences.",
-    "Curating a PQC Application Atlas: 90+ papers (2020–present) organized into 19 application domains."
+    "Curating a PQC Application Atlas: 150+ papers (2020–present) organized into 19 application domains."
   ],  
   "skills": {
     "Programming": [
@@ -25,9 +25,6 @@
       "Python",
       "Go" ,
       "MATLAB"
-    ],
-    "Typesetting": [
-      "LaTeX"
     ],
     "Data manipulation & ML": [
       "NumPy",
@@ -48,6 +45,9 @@
       "Tableau",
       "Excel",
       "Power BI"
+    ],
+    "Typesetting": [
+      "LaTeX"
     ],
     "Go libraries": [
       "Lattigo"
