@@ -10,7 +10,8 @@
 </head>
 <body>
   <header class="topbar" id="top">
-    <a class="brand" href="../" aria-label="Back to UI selector">
+    <!-- Was: Back to UI selector. Now: back to Modern home -->
+    <a class="brand" href="./" aria-label="Back to home">
       <span class="logo">◎</span>
       <span id="brandName">Portfolio</span>
     </a>
@@ -42,15 +43,28 @@
             <a class="btn" id="btnGithub" href="#" target="_blank" rel="noopener">GitHub</a>
             <a class="btn" id="btnLinkedIn" href="#" target="_blank" rel="noopener">LinkedIn</a>
             <a class="btn ghost" id="btnCV" href="../resume/CV.pdf" target="_blank" rel="noopener">Download CV</a>
-            <a class="btn ghost" href="../retro/">Retro UI</a>
+            <!-- <a class="btn ghost" href="../retro/">Retro UI</a> -->
           </div>
 
           <div class="meta" id="metaLine"></div>
         </div>
 
-        <aside class="hero-card" aria-label="Highlights">
-          <div class="card-title">Highlights</div>
-          <ul class="bullets" id="highlights"></ul>
+        <!-- Split the old Highlights card into: top profile pic + bottom highlights -->
+        <aside class="hero-card hero-stack" aria-label="Profile and highlights">
+          <div class="hero-top" aria-label="Profile picture">
+            <!-- Put your image here: modern/assets/img/profile.jpg (or .png/.webp) -->
+            <img
+              class="profile-photo"
+              src="assets/img/profile.jpg"
+              alt="Profile photo"
+              loading="lazy"
+            />
+          </div>
+
+          <div class="hero-bottom" aria-label="Highlights">
+            <div class="card-title">Highlights</div>
+            <ul class="bullets" id="highlights"></ul>
+          </div>
         </aside>
       </div>
     </section>
@@ -191,6 +205,37 @@
       </div>
     </footer>
   </main>
+
+  <!-- Minimal CSS for the split card (you can move this into modern.css) -->
+  <style>
+    .hero-stack{
+      display:flex;
+      flex-direction:column;
+      padding:0;
+      overflow:hidden; /* keeps rounded corners clean */
+    }
+    .hero-top{
+      padding: 22px 22px 14px;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+    }
+    .hero-bottom{
+      padding: 10px 22px 22px;
+      border-top: 1px solid rgba(255,255,255,0.10);
+    }
+    .profile-photo{
+      width: 170px;
+      height: 170px;
+      object-fit: cover;
+      border-radius: 9999px;
+      border: 2px solid rgba(255,255,255,0.14);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+    }
+    @media (max-width: 900px){
+      .profile-photo{ width: 140px; height: 140px; }
+    }
+  </style>
 
   <script type="module" src="modern.js"></script>
 </body>
