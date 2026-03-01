@@ -34,7 +34,19 @@ function badge(label) {
   return b;
 }
 
-function card(title, sub, desc, tags = [], actions = []) {
+function cardProject(r) {
+  const title = r?.title || 'Untitled project';
+  const sub = joinNonEmpty([r?.when, r?.role]);
+  const desc = r?.summary || '';
+  const tags = Array.isArray(r?.stack) ? r.stack : [];
+  const hi = Array.isArray(r?.highlights) ? r.highlights : [];
+  const L = r?.links || {};
+
+  const actions = [];
+  if (L.projectPage) actions.push({ label: 'Project', href: normalizeUrl(L.projectPage) });
+  if (L.paper) actions.push({ label: 'Paper', href: normalizeUrl(L.paper) });
+  if (L.code) actions.push({ label: 'Code', href: normalizeUrl(L.code) });
+
   const c = document.createElement('article');
   c.className = 'card reveal';
 
@@ -54,18 +66,29 @@ function card(title, sub, desc, tags = [], actions = []) {
 
   const p = document.createElement('p');
   p.className = 'card-desc';
-  p.textContent = desc || '';
+  p.textContent = desc;
+
+  let ul = null;
+  if (hi.length) {
+    ul = document.createElement('ul');
+    ul.className = 'card-bullets';
+    for (const x of hi) {
+      const li = document.createElement('li');
+      li.textContent = x;
+      ul.appendChild(li);
+    }
+  }
 
   const meta = document.createElement('div');
   meta.className = 'card-meta';
 
   const tagWrap = document.createElement('div');
   tagWrap.className = 'tags';
-  for (const tg of (tags || [])) tagWrap.appendChild(badge(tg));
+  for (const tg of tags) tagWrap.appendChild(badge(tg));
 
   const actWrap = document.createElement('div');
   actWrap.className = 'actions';
-  for (const a of (actions || [])) {
+  for (const a of actions) {
     const link = document.createElement('a');
     link.className = 'smalllink';
     link.href = a.href;
@@ -80,6 +103,7 @@ function card(title, sub, desc, tags = [], actions = []) {
 
   c.appendChild(h);
   c.appendChild(p);
+  if (ul) c.appendChild(ul);
   c.appendChild(meta);
 
   return c;
@@ -87,31 +111,33 @@ function card(title, sub, desc, tags = [], actions = []) {
 
 function renderResearch(items) {
   const root = el('researchCards');
+  if (!root) return;
+
   root.innerHTML = '';
 
   if (!Array.isArray(items) || !items.length) {
-    root.appendChild(card('No research projects yet', '', 'Add researchProjects in data/site.json', [], []));
+    const empty = document.createElement('article');
+    empty.className = 'card reveal';
+    empty.innerHTML = `
+      <div class="card-head">
+        <div class="card-title">No research projects yet</div>
+        <div class="card-sub"></div>
+      </div>
+      <p class="card-desc">Add <code>researchProjects</code> in <code>data/site.json</code>, or adjust your filters.</p>
+    `;
+    root.appendChild(empty);
     return;
   }
 
   for (const r of items) {
-    const title = r.title || 'Untitled project';
-    const sub = joinNonEmpty([r.when, r.role]);
-    const desc = r.summary || '';
-    const tags = r.stack || [];
-    const L = r.links || {};
-
-    const actions = [];
-    if (L.projectPage) actions.push({ label: 'Project', href: normalizeUrl(L.projectPage) });
-    if (L.paper) actions.push({ label: 'Paper', href: normalizeUrl(L.paper) });
-    if (L.code) actions.push({ label: 'Code', href: normalizeUrl(L.code) });
-
-    root.appendChild(card(title, sub, desc, tags, actions));
+    root.appendChild(cardProject(r));
   }
 }
 
 function renderPublications(pubs) {
   const ul = el('pubList');
+  if (!ul) return;
+
   ul.innerHTML = '';
 
   if (!Array.isArray(pubs) || !pubs.length) {
@@ -163,7 +189,7 @@ function uniqueTags(items) {
   for (const it of (items || [])) {
     for (const t of (it.stack || [])) s.add(t);
   }
-  return Array.from(s).sort((a,b)=>a.localeCompare(b));
+  return Array.from(s).sort((a, b) => a.localeCompare(b));
 }
 
 function filterItems(items, q, tag) {
@@ -184,45 +210,51 @@ function filterItems(items, q, tag) {
 }
 
 function setupReveal() {
+  const nodes = Array.from(document.querySelectorAll('.reveal'));
+  if (!nodes.length) return;
+
   const obs = new IntersectionObserver((entries) => {
     for (const e of entries) {
       if (e.isIntersecting) e.target.classList.add('in');
     }
   }, { threshold: 0.12 });
 
-  for (const node of Array.from(document.querySelectorAll('.reveal'))) {
-    obs.observe(node);
-  }
+  for (const node of nodes) obs.observe(node);
 }
 
 async function init() {
   applyTheme(getTheme());
-  el('themeToggle').addEventListener('click', toggleTheme);
+  const toggle = el('themeToggle');
+  if (toggle) toggle.addEventListener('click', toggleTheme);
 
+  // ✅ correct path FROM /modern/research/
   const site = await loadSiteData('../../data/site.json');
-  el('brandName').textContent = site?.name || 'Portfolio';
+  const brand = el('brandName');
+  if (brand) brand.textContent = site?.name || 'Portfolio';
 
   const all = site?.researchProjects || [];
   const pubs = site?.publications || [];
   renderPublications(pubs);
 
   const tagSel = el('tag');
-  for (const t of uniqueTags(all)) {
-    const opt = document.createElement('option');
-    opt.value = t;
-    opt.textContent = t;
-    tagSel.appendChild(opt);
+  if (tagSel) {
+    for (const t of uniqueTags(all)) {
+      const opt = document.createElement('option');
+      opt.value = t;
+      opt.textContent = t;
+      tagSel.appendChild(opt);
+    }
   }
 
   const q = el('q');
   const rerender = () => {
-    const filtered = filterItems(all, q.value, tagSel.value);
+    const filtered = filterItems(all, q ? q.value : '', tagSel ? tagSel.value : '');
     renderResearch(filtered);
     setupReveal();
   };
 
-  q.addEventListener('input', rerender);
-  tagSel.addEventListener('change', rerender);
+  if (q) q.addEventListener('input', rerender);
+  if (tagSel) tagSel.addEventListener('change', rerender);
 
   rerender();
 }
