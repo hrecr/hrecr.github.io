@@ -299,14 +299,14 @@ function renderManualProjects(manual) {
 
 async function renderGithubProjects(username, featuredNames) {
   const root = el('projectCards');
-  const note = el('ghNote');
+  // const note = el('ghNote');
 
   root.innerHTML = '';
   note.textContent = 'Loading from GitHub…';
 
-  const { repos, note: ghNote } = await fetchGithubRepos(username);
-  const featured = pickFeaturedRepos(repos, featuredNames);
-  note.textContent = ghNote;
+  // const { repos, note: ghNote } = await fetchGithubRepos(username);
+  // const featured = pickFeaturedRepos(repos, featuredNames);
+  // note.textContent = ghNote;
 
   if (!featured.length) {
     root.appendChild(card('GitHub projects not loaded', '', `Set githubUsername in data/site.json (current: ${username || 'empty'}).`, [], []));
@@ -499,7 +499,7 @@ async function init() {
   setHref('ghProfile', normalizeUrl(site?.links?.github || ''));
 
   if (impl.mode === 'manual') {
-    el('ghNote').textContent = 'Manual mode (projects are curated in data/site.json).';
+    // el('ghNote').textContent = 'Manual mode (projects are curated in data/site.json).';
     renderManualProjects(impl.manual || []);
   } else {
     await renderGithubProjects(site?.githubUsername, impl.featuredRepos || []);
