@@ -17,7 +17,7 @@
   "summary":"I am an M.Sc. student in Computer Science at Koç University (Istanbul), working under Prof. Alptekin Küpçü on password-based authentication, SMPC-based protocols, and implementation-driven cryptographic systems with Rust/Go and Docker benchmarking. I hold an M.Sc. in Applied Mathematics from the Polytechnic University of Tehran, where I studied quantum error correction, surface codes, and quantum kernels for neural networks using Qiskit and PyQuil.",
   "highlights": [
     "Research across SMPC, post-quantum cryptography and privacy-preserving ML.",
-    "External reviewer for IEEE TIFS, ACM ASIACCS 2024 and 2026, ACNS 2026, JISAS 2025,Royal society open science 2024 and the Turkish Journal of Electrical Engineering & Computer Sciences.",
+    "External reviewer for IEEE TIFS, ACM ASIACCS 2024 and 2026, ACNS 2026,Peerj 2026, JISAS 2025,Royal society open science 2024 and the Turkish Journal of Electrical Engineering & Computer Sciences.",
     "Curating a PQC Application Atlas: 150+ papers (2020–present) organized into 19 application domains."
   ],  
   "skills": {
